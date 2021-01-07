@@ -1,21 +1,38 @@
-﻿#include<stdio.h>
+#include<stdio.h>
 #include<malloc.h>
-#include<math.h>
+#include<stdlib.h>
+
+int strlen(char* str)
+{
+    int i = 0;
+    while (str[i] != '\0')
+        i++;
+    return i - 1;
+}
 int main()
 {
     char** text;
-
+    int lenght = 0;
     int chislo = 0;
-    int i, n, jn, jk, summ = 0, fl, p = 1;
+    int j = 0, i, n, jn, jk, summ = 0, fl, p = 1;
     scanf_s("%d", &n);
     rewind(stdin);
     text = (char**)malloc(n * sizeof(char*));
     for (i = 0; i < n; i++)
         *(text + i) = (char*)malloc(255 * sizeof(char));
     for (i = 0; i < n; i++)
-        fgets(*(text + i), 255, stdin);
+    {
+        rewind(stdin);
+        while ((text[i][j++] = getchar()) != '\n')
+        {
+            text[i] = (char*)realloc(text[i], (j + 1) * sizeof(char*));
+        }
+        text[i][j - 1] = '\0';
+        j = 0;
+    }
+
     i = 0;
-    int j = 0;
+    j = 0;
 
     for (i = 0; i < n; i++)
     {
@@ -38,9 +55,49 @@ int main()
                 p /= 10;
             }
             summ += chislo;
+
             chislo = 0;
             p = 1;
         }
+        lenght = strlen(text[i]);
+        //printf("%d\n", summ);
+        char* c;
+        c = (char*)malloc(10 * sizeof(char));
+        int v = 0;
+        while (summ > 9)
+        {
+            c[v++] = (summ % 10) + '0';
+            summ = summ / 10;
+        }
+
+        c[v++] = summ + '0';
+        c[v] = '\0';
+        char t;
+
+        for (int i = 0; i < v / 2; i++)
+        {
+            t = c[i];
+            c[i] = c[v - 1 - i];
+            c[v - 1 - i] = t;
+        }
+
+
+
+        v = 0;
+        while (c[v] != '\0')
+        {
+            lenght++;
+            text[i][lenght] = c[v];
+            text[i][lenght + 1] = '\0';
+            v++;
+
+        }
+        free(c);
+        text[i][lenght + 1] = '\0';
+        summ = 0;
+
     }
-    printf("%d", summ);
+    for (i = 0; i < n; i++)
+        puts(text[i]);
+    return 0;
 }
